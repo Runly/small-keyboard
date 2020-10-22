@@ -10,11 +10,9 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
-  body {
-    padding: 0;
-    margin: 0;
-  }
+  background: #fff;
+  width: 100%;
+  height: 100vh;
 }
 
 #nav {
