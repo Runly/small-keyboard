@@ -12,7 +12,8 @@
   text-align: center;
   background: #fff;
   width: 100%;
-  height: 100vh;
+  height: 100%;
+  min-height: 100vh;
 }
 
 #nav {
