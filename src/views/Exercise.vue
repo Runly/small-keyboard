@@ -16,8 +16,15 @@
         开始
       </el-button>
 
+      <el-button
+        type="primary"
+        size="small"
+        @click="reStart">
+        重新开始
+      </el-button>
+
       <span class="page">
-        {{ pageIndex }} / {{ numbers.length / pageSize }}
+        第 {{ pageIndex }} 页 / 共 {{ numbers.length / pageSize }} 页
       </span>
 
       <div class="time">
@@ -43,8 +50,7 @@
           :key="index"
           ref="numberInput"
           class="number-input"
-          :value="number.inputValue"
-          @input="event => number.inputValue = event.target.value"
+          v-model="number.inputValue"
           @keyup.enter="event => onEnterUp(event, number, index)"/>
       </div>
     </div>
@@ -67,7 +73,8 @@
 import countdown from 'countdown'
 import { precisionRound } from '@/common/utils'
 
-const maxLength = 1000
+const MAX_LENGTH = 1000
+const TOTAL_TIME = 5 * 60 * 1000 // 五分钟
 
 export default {
   name: 'exercise',
@@ -94,7 +101,7 @@ export default {
   },
   methods: {
     createRandomNumbers () {
-      for (let i = 0; i < maxLength; i++) {
+      for (let i = 0; i < MAX_LENGTH; i++) {
         const arr = [
           10000, // 6
           100000, // 7
@@ -131,7 +138,7 @@ export default {
       const now = new Date()
       this.timerId =
         countdown(
-          new Date(now.getTime() + 5 * 60 * 1000),
+          new Date(now.getTime() + TOTAL_TIME),
           (ts) => {
             this.leftTime = `${Math.floor(ts.seconds / 60)}分${ts.seconds % 60}秒`
             if (ts.seconds === 0) {
@@ -143,7 +150,9 @@ export default {
           },
           countdown.SECONDS)
 
-      this.$refs.numberInput[0].focus()
+      this.$nextTick(() => {
+        this.$refs.numberInput[0].focus()
+      })
     },
     onEnterUp (event, number, index) {
       if (event.target.value && event.target.value !== '') {
@@ -163,10 +172,15 @@ export default {
       }
     },
     reStart () {
-      this.mark = undefined
+      if (this.timerId) {
+        clearInterval(this.timerId)
+        this.timerId = null
+      }
       this.numbers = []
-      this.pageIndex = 0
+      this.pageIndex = 1
+      this.mark = undefined
       this.createRandomNumbers()
+      this.start()
     }
   }
 }
